@@ -136,18 +136,11 @@ export const Navbar = () => {
               <span>Github</span>
             </Link>
 
-            <div className="flex items-center gap-4 border-l border-white/10 pl-6">
-              
-                
-                
-          
-            </div>
+            <div className="flex items-center gap-4 border-l border-white/10 pl-6"></div>
           </div>
 
           {/* 5. Apply the animation to the button */}
           <div className="flex items-center gap-4 md:hidden">
-          
-             
             <motion.button
               type="button"
               aria-label="Toggle menu"
@@ -207,8 +200,6 @@ export const Navbar = () => {
                 variants={menuItemVariants}
                 className="mt-6 flex flex-col gap-3"
               >
-                
-                  
                 <Link
                   to="https://github.com/algoscope-hq/AlgoScope"
                   onClick={() => setOpen(false)}
