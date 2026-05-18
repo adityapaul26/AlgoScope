@@ -195,6 +195,12 @@ const SearchBar = () => {
     [navigate]
   )
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setQuery('')
+    setResults([])
+  }
+
   // Handle Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -221,7 +227,7 @@ const SearchBar = () => {
           handleSelect(results[selectedIndex].item.route)
         }
       } else if (e.key === 'Escape') {
-        setIsModalOpen(false)
+        handleCloseModal()
       }
     }
 
@@ -279,7 +285,7 @@ const SearchBar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
+              onClick={handleCloseModal}
               className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
             />
 
@@ -316,7 +322,7 @@ const SearchBar = () => {
                 />
                 {/* Close Button */}
                 <button
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={handleCloseModal}
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/10 transition-all duration-200"
                   aria-label="Close search"
                 >
