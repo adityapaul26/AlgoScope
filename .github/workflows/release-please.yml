@@ -41,7 +41,7 @@ jobs:
         run: npm install
 
       - name: Rebuild CHANGELOG.md
-        run: node scripts/append-file-tree.js ${{ needs.release-please.outputs.tag_name }}
+        run: node scripts/append-file-tree.cjs ${{ needs.release-please.outputs.tag_name }}
 
       - name: Commit and push updated CHANGELOG.md
         run: |
