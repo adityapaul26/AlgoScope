@@ -33,8 +33,8 @@ function getChangedFilesTree(fromTag, toTag) {
           const [status, ...rest] = line.split('\t');
           return { status, file: rest.join('\t') };
         });
-    } else {
-      const all = execSync('git ls-tree -r HEAD --name-only', { encoding: 'utf8' })
+    } } else {
++      const all = execSync(`git ls-tree -r ${toTag} --name-only`, { encoding: 'utf8' })
         .split('\n')
         .filter(Boolean)
         .map(f => ({ status: 'A', file: f }));
