@@ -10,7 +10,6 @@ permissions:
   pull-requests: write
 
 jobs:
-  # Standard release-please job – opens a release PR, creates tags + releases
   release-please:
     runs-on: ubuntu-latest
     outputs:
@@ -22,13 +21,12 @@ jobs:
         with:
           release-type: simple
 
-  # This job runs ONLY after a new release is created (i.e., the release PR was merged)
-  append-file-tree:
+  rebuild-changelog:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository (full history)
+      - name: Checkout repository with full history
         uses: actions/checkout@v4
         with:
           ref: main
@@ -39,16 +37,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install script dependencies
-        run: npm install directory-tree
-
-      - name: Generate changed‑files tree and append to CHANGELOG.md
+      - name: Run changelog rebuild script
         run: node scripts/append-file-tree.js ${{ needs.release-please.outputs.tag_name }}
 
-      - name: Commit and push the updated CHANGELOG.md
+      - name: Commit and push rebuilt CHANGELOG.md
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git diff --quiet && git diff --staged --quiet || git commit -m "docs: add changed-files tree to CHANGELOG.md [skip ci]"
+          git diff --quiet && git diff --staged --quiet || git commit -m "docs: rebuild CHANGELOG.md with proper ordering and file trees [skip ci]"
           git push
