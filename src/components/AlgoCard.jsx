@@ -40,13 +40,13 @@ export default function AlgoCard({
       whileHover="hover"
     >
       <div className="p-6">
-        <h2 className="text-2xl font-bold text-[#FFF8F0] mb-2">{title}</h2>
-        <p className="text-[rgba(255, 255, 255, 0.7)] text-base font-light leading-relaxed">
+        <h2 className="text-2xl font-bold theme-text-strong mb-2">{title}</h2>
+        <p className="theme-text-muted text-base font-light leading-relaxed">
           {description}
         </p>
         {image && (
           <motion.div
-            className="mt-6 flex justify-center bg-black/20 rounded-xl p-4 border border-white/5"
+            className="theme-media-surface mt-6 flex justify-center rounded-xl p-4 border"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
           >
@@ -59,10 +59,10 @@ export default function AlgoCard({
         )}
       </div>
       <div
-        className={`px-6 py-4 flex  justify-center bg-black/20 border-t border-white/5`}
+        className="theme-media-surface px-6 py-4 flex justify-center border-t"
       >
         <motion.button
-          className="text-sm font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 px-6 py-3 rounded-xl transition-all duration-300 backdrop-blur-md"
+          className="theme-button-secondary text-sm font-medium border px-6 py-3 rounded-xl transition-all duration-300 backdrop-blur-md"
           onClick={() => navigate(link)}
           whileHover={{ scale: 1.05, ...glowVariants.hover }}
           whileTap={{ scale: 0.95 }}
