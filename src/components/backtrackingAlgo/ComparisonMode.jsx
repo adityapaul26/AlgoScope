@@ -39,28 +39,38 @@ function generateFrames(n) {
 }
 
 function MiniBoard({ n, frames, speed, trigger, accent }) {
-  const [frame, setFrame]         = useState(null)
-  const [solutions, setSolutions] = useState(0)
+  const [frame, setFrame]           = useState(null)
+  const [solutions, setSolutions]   = useState(0)
   const [backtracks, setBacktracks] = useState(0)
-  const [done, setDone]           = useState(false)
-  const timersRef = useRef([])
+  const [done, setDone]             = useState(false)
+  // Single live timer handle — never more than one pending setTimeout at a time.
+  const timerRef = useRef(null)
 
   useEffect(() => {
-    timersRef.current.forEach(clearTimeout)
-    timersRef.current = []
+    clearTimeout(timerRef.current)
     setFrame(null); setSolutions(0); setBacktracks(0); setDone(false)
     if (trigger === 0) return
 
-    frames.forEach((f, i) => {
-      const t = setTimeout(() => {
+    const total = frames.length
+    const delay = calculateStepDelay(100, speed)
+
+    function playTick(i) {
+      timerRef.current = setTimeout(() => {
+        const f = frames[i]
         setFrame(f)
         setSolutions(f.solutions)
         setBacktracks(f.backtracks)
-        if (i === frames.length - 1) setDone(true)
-      }, i * calculateStepDelay(100, speed))
-      timersRef.current.push(t)
-    })
-    return () => timersRef.current.forEach(clearTimeout)
+        if (i === total - 1) {
+          setDone(true)
+        } else {
+          playTick(i + 1)
+        }
+      }, delay)
+    }
+
+    playTick(0)
+
+    return () => clearTimeout(timerRef.current)
   }, [trigger, frames, speed])
 
   const board = frame?.board ?? Array.from({ length: n }, () => Array(n).fill(''))
@@ -76,8 +86,6 @@ function MiniBoard({ n, frames, speed, trigger, accent }) {
     if (hasQueen)  return `border-white scale-105`
     return isLight ? 'bg-slate-700 border-slate-600' : 'bg-slate-800 border-slate-700'
   }
-
-  const queenColor = frame?.type === 'solution' ? 'text-black' : 'text-black'
 
   return (
     <div className="flex-1 rounded-xl border bg-slate-900/60 overflow-hidden" style={{ borderColor: accent + '44' }}>
@@ -100,7 +108,6 @@ function MiniBoard({ n, frames, speed, trigger, accent }) {
                 key={`${r}-${c}`}
                 style={{ width: cellPx, height: cellPx }}
                 className={`flex items-center justify-center rounded border transition-all duration-150 text-base font-bold ${cellStyle(r, c)}`}
-                // queen color inline because it depends on accent
               >
                 {cell === 'Q' ? <span style={{ color: frame?.type === 'solution' ? '#000' : accent }}>♛</span> : ''}
               </div>
