@@ -289,7 +289,6 @@
     var(--tw-gradient-from), var(--tw-gradient-via-stops), var(--tw-gradient-to) !important;
 }
 
-
 /* Custom scrollbar - Issue #170 */
 * {
   scrollbar-width: thin;
