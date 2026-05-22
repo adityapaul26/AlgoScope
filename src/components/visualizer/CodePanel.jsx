@@ -16,29 +16,29 @@ const CodePanel = memo(function CodePanel({
 
   const activeTheme = themes[theme] ?? themes.vscDarkPlus
 
- useEffect(() => {
-  if (!activeLine || !scrollContainerRef.current) return
+  useEffect(() => {
+    if (!activeLine || !scrollContainerRef.current) return
 
-  const activeNode = scrollContainerRef.current.querySelector(
-    `[data-line-number="${activeLine}"]`
-  )
+    const activeNode = scrollContainerRef.current.querySelector(
+      `[data-line-number="${activeLine}"]`
+    )
 
-  if (activeNode) {
-    const container = scrollContainerRef.current
+    if (activeNode) {
+      const container = scrollContainerRef.current
 
-    const containerTop = container.scrollTop
-    const containerBottom = containerTop + container.clientHeight
+      const containerTop = container.scrollTop
+      const containerBottom = containerTop + container.clientHeight
 
-    const nodeTop = activeNode.offsetTop
-    const nodeBottom = nodeTop + activeNode.clientHeight
+      const nodeTop = activeNode.offsetTop
+      const nodeBottom = nodeTop + activeNode.clientHeight
 
-    if (nodeTop < containerTop) {
-      container.scrollTop = nodeTop - 20
-    } else if (nodeBottom > containerBottom) {
-      container.scrollTop = nodeBottom - container.clientHeight + 20
+      if (nodeTop < containerTop) {
+        container.scrollTop = nodeTop - 20
+      } else if (nodeBottom > containerBottom) {
+        container.scrollTop = nodeBottom - container.clientHeight + 20
+      }
     }
-  }
-}, [activeLine])
+  }, [activeLine])
 
   useEffect(() => {
     if (!copied) return
