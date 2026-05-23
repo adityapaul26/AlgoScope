@@ -22,6 +22,24 @@ const LEGEND_ITEMS = [
   { l: 'Weighted', c: 'bg-orange-500' },
 ]
 
+const getCellClassName = (node) => {
+  return `w-7 h-7 border border-slate-800 flex items-center justify-center text-[11px] text-white ${
+    node.isStart
+      ? 'bg-green-500'
+      : node.isEnd
+        ? 'bg-red-500'
+        : node.isWall
+          ? 'bg-black'
+          : node.path
+            ? 'bg-yellow-400'
+            : node.visited
+              ? 'bg-cyan-500'
+              : node.isWeighted
+                ? 'bg-orange-500'
+                : 'bg-[#0f172a]'
+  }`
+}
+
 const createNode = (row, col) => {
   return {
     row,
@@ -147,6 +165,8 @@ const runBellmanFord = (currentGrid) => {
   return { order, parent, distances: dists }
 }
 
+// Grid visualization uses a single start/end pair,
+// so Floyd-Warshall delegates to Dijkstra for visualization consistency.
 const runFloydWarshallVisualization = (currentGrid) => {
   const visualizationResult = runDijkstra(currentGrid)
   return visualizationResult
@@ -174,6 +194,11 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
 
   const timeouts = useRef([])
   const gridRef = useRef(null)
+  const speedRef = useRef(speed)
+
+  useEffect(() => {
+    speedRef.current = speed
+  }, [speed])
 
   useEffect(() => {
     gridRef.current = grid
@@ -261,8 +286,8 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
     (visitedNodes, shortestPath, finalDistances) => {
       clearPath()
       setRunning(true)
-      const visitSpeed = 15 / speed
-      const pathSpeed = 40 / speed
+      const visitSpeed = 15 / speedRef.current
+      const pathSpeed = 40 / speedRef.current
 
       visitedNodes.forEach((node, index) => {
         const timer = setTimeout(() => {
@@ -318,7 +343,7 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
         timeouts.current.push(timer)
       }
     },
-    [clearPath, speed]
+    [clearPath]
   )
 
   useEffect(() => {
@@ -341,7 +366,7 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
         )
       }, 0)
     }
-  }, [runKey, algorithm, speed, animate])
+  }, [runKey, algorithm, animate])
 
   return (
     <div className="w-full bg-[#020617] p-4 rounded-xl">
@@ -439,21 +464,7 @@ const GridVisualizer = ({ algorithm, runKey, speed }) => {
                     mousePressed && handleMouseInteraction(r, c)
                   }
                   onMouseUp={() => setMousePressed(false)}
-                  className={`w-7 h-7 border border-slate-800 flex items-center justify-center text-[11px] text-white ${
-                    node.isStart
-                      ? 'bg-green-500'
-                      : node.isEnd
-                        ? 'bg-red-500'
-                        : node.isWall
-                          ? 'bg-black'
-                          : node.path
-                            ? 'bg-yellow-400'
-                            : node.visited
-                              ? 'bg-cyan-500'
-                              : node.isWeighted
-                                ? 'bg-orange-500'
-                                : 'bg-[#0f172a]'
-                  }`}
+                  className={getCellClassName(node)}
                 >
                   {node.isWeighted ? node.weight : null}
                 </div>
