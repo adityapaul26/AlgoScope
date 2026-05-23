@@ -47,6 +47,42 @@ const parseStoredArray = (value) =>
     .map((item) => Number(item.trim()))
     .filter((item) => !Number.isNaN(item))
 
+const validateParsedNumbers = (parsedNumbers, selectedAlgorithm) => {
+  if (parsedNumbers.length > MAX_CUSTOM_INPUT_SIZE) {
+    return 'Please enter 100 numbers or fewer.'
+  }
+
+  if (['counting', 'radix'].includes(selectedAlgorithm)) {
+    if (parsedNumbers.some((n) => n < 0 || !Number.isInteger(n))) {
+      return 'Counting Sort and Radix Sort only support non-negative integers.'
+    }
+  }
+
+  return ''
+}
+
+const applyParsedNumbers = (
+  parsedNumbers,
+  selectedAlgorithm,
+  setBaseArray,
+  clearPlayback,
+  setCustomInput,
+  setInputError,
+  customInputValue
+) => {
+  const validationError = validateParsedNumbers(parsedNumbers, selectedAlgorithm)
+  if (validationError) {
+    setInputError(validationError)
+    return false
+  }
+
+  clearPlayback()
+  setBaseArray(parsedNumbers)
+  setCustomInput(customInputValue)
+  setInputError('')
+  return true
+}
+
 const buildSortSampleCases = (algorithm) => [
   {
     name: 'Nearly Sorted Array',
@@ -199,25 +235,15 @@ export default function Visualizer() {
       return
     }
 
-    if (parsedNumbers.length > MAX_CUSTOM_INPUT_SIZE) {
-      setInputError('Please enter 100 numbers or fewer.')
-      return
-    }
-
-    // Constraint check for non-comparative sorts
-    if (['counting', 'radix'].includes(selectedAlgorithm)) {
-      if (parsedNumbers.some((n) => n < 0 || !Number.isInteger(n))) {
-        setInputError(
-          'Counting Sort and Radix Sort only support non-negative integers.'
-        )
-        return
-      }
-    }
-
-    clearPlayback()
-    setBaseArray(parsedNumbers)
-    setCustomInput('')
-    setInputError('')
+    applyParsedNumbers(
+      parsedNumbers,
+      selectedAlgorithm,
+      setBaseArray,
+      clearPlayback,
+      setCustomInput,
+      setInputError,
+      ''
+    )
   }
 
   const isRunning = isPlaying
@@ -462,10 +488,16 @@ export default function Visualizer() {
                     onLoad={(input) => {
                       const parsed = parseStoredArray(input)
                       if (!parsed.length) return
-                      clearPlayback()
-                      setBaseArray(parsed)
-                      setCustomInput(parsed.join(', '))
-                      setInputError('')
+
+                      applyParsedNumbers(
+                        parsed,
+                        selectedAlgorithm,
+                        setBaseArray,
+                        clearPlayback,
+                        setCustomInput,
+                        setInputError,
+                        parsed.join(', ')
+                      )
                     }}
                   />
 

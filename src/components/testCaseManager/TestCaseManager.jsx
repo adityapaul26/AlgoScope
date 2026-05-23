@@ -26,17 +26,30 @@ export default function TestCaseManager({
   const hasSeededSamples = useRef(false)
 
   const fetchCases = useCallback(async () => {
-    return search
+    const cases = search
       ? await searchTestCases(search)
       : await getAllTestCases(activeTab === 'current' ? algorithm : null)
+
+    if (search && activeTab === 'current' && algorithm) {
+      return cases.filter((testCase) => testCase.algorithm === algorithm)
+    }
+
+    return cases
   }, [search, algorithm, activeTab])
 
   const load = useCallback(async () => {
     const data = await fetchCases()
 
-    if (!search && data.length === 0 && sampleCases.length > 0 && !hasSeededSamples.current) {
+    if (
+      !search &&
+      data.length === 0 &&
+      sampleCases.length > 0 &&
+      !hasSeededSamples.current
+    ) {
       hasSeededSamples.current = true
-      await Promise.all(sampleCases.map((sampleCase) => saveTestCase(sampleCase)))
+      await Promise.all(
+        sampleCases.map((sampleCase) => saveTestCase(sampleCase))
+      )
       const seededCases = await fetchCases()
       setTestCases(seededCases)
       return
@@ -58,11 +71,22 @@ export default function TestCaseManager({
   const handleSave = async () => {
     if (!name.trim() || !algorithm || !currentInput) return
     setSaving(true)
-    await saveTestCase({ name, algorithm, input: currentInput, description })
-    setName('')
-    setDescription('')
-    setSaving(false)
-    load()
+
+    let shouldReload = false
+
+    try {
+      await saveTestCase({ name, algorithm, input: currentInput, description })
+      setName('')
+      setDescription('')
+      shouldReload = true
+    } catch (error) {
+      console.error('Failed to save test case:', error)
+    } finally {
+      setSaving(false)
+      if (shouldReload) {
+        void load()
+      }
+    }
   }
 
   const handleUse = async (tc) => {
@@ -72,13 +96,39 @@ export default function TestCaseManager({
   }
 
   const handlePin = async (id) => {
-    await togglePin(id)
-    load()
+    setSaving(true)
+
+    let shouldReload = false
+
+    try {
+      await togglePin(id)
+      shouldReload = true
+    } catch (error) {
+      console.error('Failed to toggle pin:', error)
+    } finally {
+      setSaving(false)
+      if (shouldReload) {
+        void load()
+      }
+    }
   }
 
   const handleDelete = async (id) => {
-    await deleteTestCase(id)
-    load()
+    setSaving(true)
+
+    let shouldReload = false
+
+    try {
+      await deleteTestCase(id)
+      shouldReload = true
+    } catch (error) {
+      console.error('Failed to delete test case:', error)
+    } finally {
+      setSaving(false)
+      if (shouldReload) {
+        void load()
+      }
+    }
   }
 
   const handleExport = async () => {
@@ -89,9 +139,22 @@ export default function TestCaseManager({
   const handleImport = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-    await importTestCases(file)
-    e.target.value = ''
-    load()
+    setSaving(true)
+
+    let shouldReload = false
+
+    try {
+      await importTestCases(file)
+      shouldReload = true
+    } catch (error) {
+      console.error('Failed to import test cases:', error)
+    } finally {
+      e.target.value = ''
+      setSaving(false)
+      if (shouldReload) {
+        void load()
+      }
+    }
   }
 
   const pinned = testCases.filter((tc) => tc.pinned)
@@ -259,7 +322,9 @@ function TestCaseItem({ tc, onUse, onPin, onDelete }) {
           type="button"
           onClick={() => onPin(tc.id)}
           className={`rounded px-2 py-1 text-xs ${
-            tc.pinned ? 'text-yellow-400' : 'text-gray-500 hover:text-yellow-400'
+            tc.pinned
+              ? 'text-yellow-400'
+              : 'text-gray-500 hover:text-yellow-400'
           }`}
           aria-label={tc.pinned ? 'Unpin test case' : 'Pin test case'}
         >

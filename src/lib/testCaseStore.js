@@ -4,7 +4,9 @@ const STORE_NAME = 'testcases'
 
 function openDB() {
   if (typeof indexedDB === 'undefined') {
-    return Promise.reject(new Error('IndexedDB is not available in this environment'))
+    return Promise.reject(
+      new Error('IndexedDB is not available in this environment')
+    )
   }
 
   return new Promise((resolve, reject) => {
@@ -26,7 +28,9 @@ function openDB() {
 
 function sortByUsedAtDesc(testCases) {
   return [...testCases].sort(
-    (a, b) => new Date(b.usedAt || b.createdAt || 0) - new Date(a.usedAt || a.createdAt || 0)
+    (a, b) =>
+      new Date(b.usedAt || b.createdAt || 0) -
+      new Date(a.usedAt || a.createdAt || 0)
   )
 }
 
@@ -34,19 +38,37 @@ function safeText(value) {
   return typeof value === 'string' ? value : value == null ? '' : String(value)
 }
 
-export async function saveTestCase({ name, algorithm, input, description = '' }) {
-  const db = await openDB()
+function buildTestCaseEntry({
+  name,
+  algorithm,
+  input,
+  description = '',
+  pinned = false,
+  createdAt,
+  usedAt,
+}) {
   const now = new Date().toISOString()
-  const entry = {
+
+  return {
     id: `tc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     name: safeText(name).trim(),
     algorithm: safeText(algorithm).trim(),
     input: safeText(input),
     description: safeText(description),
-    pinned: false,
-    createdAt: now,
-    usedAt: now,
+    pinned: Boolean(pinned),
+    createdAt: createdAt || now,
+    usedAt: usedAt || now,
   }
+}
+
+export async function saveTestCase({
+  name,
+  algorithm,
+  input,
+  description = '',
+}) {
+  const db = await openDB()
+  const entry = buildTestCaseEntry({ name, algorithm, input, description })
 
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite')
@@ -62,7 +84,9 @@ export async function getAllTestCases(algorithm = null) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly')
     const store = tx.objectStore(STORE_NAME)
-    const req = algorithm ? store.index('algorithm').getAll(algorithm) : store.getAll()
+    const req = algorithm
+      ? store.index('algorithm').getAll(algorithm)
+      : store.getAll()
 
     req.onsuccess = () => resolve(sortByUsedAtDesc(req.result))
     req.onerror = (e) => reject(e.target.error)
@@ -176,25 +200,34 @@ export async function importTestCases(file) {
         const tx = db.transaction(STORE_NAME, 'readwrite')
         const store = tx.objectStore(STORE_NAME)
 
+        let successfulImports = 0
+
         data.forEach((tc) => {
-          const entry = {
-            ...tc,
-            id: `tc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-            pinned: Boolean(tc?.pinned),
-            createdAt: tc?.createdAt || new Date().toISOString(),
-            usedAt: tc?.usedAt || new Date().toISOString(),
-          }
+          if (!tc || typeof tc !== 'object') return
+
+          const entry = buildTestCaseEntry({
+            name: tc.name,
+            algorithm: tc.algorithm,
+            input: tc.input,
+            description: tc.description,
+            pinned: tc.pinned,
+            createdAt: tc.createdAt,
+            usedAt: tc.usedAt,
+          })
+
           store.put(entry)
+          successfulImports += 1
         })
 
-        tx.oncomplete = () => resolve(data.length)
+        tx.oncomplete = () => resolve(successfulImports)
         tx.onerror = (err) => reject(err.target.error)
       } catch (err) {
         reject(err)
       }
     }
 
-    reader.onerror = () => reject(reader.error || new Error('Failed to read file'))
+    reader.onerror = () =>
+      reject(reader.error || new Error('Failed to read file'))
     reader.readAsText(file)
   })
 }

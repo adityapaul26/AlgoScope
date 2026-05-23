@@ -40,9 +40,16 @@ const parseStoredSearchCase = (input) => {
   try {
     const parsed = JSON.parse(input)
     if (parsed && Array.isArray(parsed.array)) {
+      const hasTarget = Object.prototype.hasOwnProperty.call(parsed, 'target')
+      const target = hasTarget ? Number(parsed.target) : undefined
+
+      if (hasTarget && Number.isNaN(target)) {
+        return null
+      }
+
       return {
         array: parsed.array.map(Number).filter((item) => !Number.isNaN(item)),
-        target: parsed.target,
+        ...(hasTarget ? { target } : {}),
       }
     }
   } catch {
@@ -85,7 +92,9 @@ export default function Visualizer() {
 
   useEffect(() => {
     const params = {}
-    if (target) params.target = target
+    if (target !== '' && target !== null && target !== undefined) {
+      params.target = target
+    }
     if (language) params.lang = language
     if (algorithm) params.algo = algorithm
     setSearchParams(params, { replace: true })
@@ -312,7 +321,10 @@ export default function Visualizer() {
                 ].map(({ step, label }) => {
                   const done =
                     (step === '1' && algorithm) ||
-                    (step === '2' && target) ||
+                    (step === '2' &&
+                      target !== '' &&
+                      target !== null &&
+                      target !== undefined) ||
                     (step === '3' && hasSteps)
                   return (
                     <div key={step} className="flex items-center gap-3">
@@ -411,7 +423,12 @@ export default function Visualizer() {
                     >
                       <button
                         onClick={handleSearch}
-                        disabled={isRunning || !target}
+                        disabled={
+                          isRunning ||
+                          target === '' ||
+                          target === null ||
+                          target === undefined
+                        }
                         className="w-full text-sm font-bold rounded-xl bg-cyan-600 px-6 py-3 text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {isRunning
