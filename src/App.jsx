@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -116,9 +116,12 @@ function App() {
                   <RedirectToSignIn />
                 </SignedOut>
               </>
-            ) : (
-              // If Clerk isn't configured, allow access to PracticePage in dev mode
+            ) : import.meta.env.DEV ? (
+              // Allow access to PracticePage only in development when Clerk is not configured
               <PracticePage />
+            ) : (
+              // In non-dev environments without Clerk, redirect to home (or show unauthorized)
+              <Navigate to="/" replace />
             )}
           </AppLayout>
         </Suspense>
