@@ -11,20 +11,24 @@ const glitchKeyframes = `
   60%       { clip-path: inset(80% 0 5% 0);  transform: translate(2px, 0); }
   80%       { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 0); }
 }
+
 @keyframes glitch-2 {
   0%, 100% { clip-path: inset(50% 0 30% 0); transform: translate(3px, 0); }
   25%       { clip-path: inset(10% 0 80% 0); transform: translate(-3px, 0); }
   50%       { clip-path: inset(70% 0 10% 0); transform: translate(2px, 0); }
   75%       { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 0); }
 }
+
 @keyframes scanline {
   0%   { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
+
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
+
 @keyframes flicker {
   0%, 95%, 100% { opacity: 1; }
   96%            { opacity: 0.4; }
@@ -49,9 +53,16 @@ export default function NotFound() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+
+    resize();
 
     const particles = Array.from({ length: 40 }, () => ({
       x: Math.random() * canvas.width,
@@ -63,22 +74,34 @@ export default function NotFound() {
     }));
 
     let animId;
+
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       particles.forEach((p) => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(34, 211, 238, ${p.opacity})`;
         ctx.fill();
+
         p.x += p.speedX;
         p.y += p.speedY;
+
         if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
         if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
       });
+
       animId = requestAnimationFrame(draw);
     };
+
     draw();
-    return () => cancelAnimationFrame(animId);
+
+    window.addEventListener("resize", resize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
   return (
@@ -128,10 +151,17 @@ export default function NotFound() {
             <span>algoscope / routes / not-found</span>
           </motion.div>
 
-          <div className="relative" style={{ animation: "flicker 8s infinite" }}>
+          <div
+            className="relative"
+            style={{ animation: "flicker 8s infinite" }}
+          >
             <h1
               className="text-[120px] font-bold leading-none tracking-tighter"
-              style={{ color: "#22d3ee", fontFamily: "'Geist Mono', monospace" }}
+              style={{
+                color: "#22d3ee",
+                fontFamily: "'Geist Mono', monospace",
+                textShadow: "0 0 20px rgba(34,211,238,0.5)",
+              }}
             >
               404
             </h1>
@@ -148,6 +178,7 @@ export default function NotFound() {
             >
               404
             </div>
+
             <div
               aria-hidden="true"
               className="absolute inset-0 text-[120px] font-bold leading-none tracking-tighter"
@@ -174,6 +205,7 @@ export default function NotFound() {
             >
               Page not found
             </p>
+
             <p
               className="text-sm"
               style={{ color: "var(--color-text-secondary, #94a3b8)" }}
@@ -200,6 +232,7 @@ export default function NotFound() {
               <div className="w-2.5 h-2.5 rounded-full bg-red-500 opacity-80" />
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-500 opacity-80" />
               <div className="w-2.5 h-2.5 rounded-full bg-green-500 opacity-80" />
+
               <span
                 className="ml-2 text-xs"
                 style={{ color: "rgba(34,211,238,0.4)" }}
@@ -224,6 +257,7 @@ export default function NotFound() {
                 }}
               >
                 {line.text}
+
                 {i === codeLines.length - 1 && (
                   <span
                     style={{
@@ -258,7 +292,11 @@ export default function NotFound() {
             </Link>
 
             <button
-              onClick={() => navigate(-1)}
+              onClick={() =>
+                window.history.length > 1
+                  ? navigate(-1)
+                  : navigate("/")
+              }
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95"
               style={{
                 background: "transparent",
