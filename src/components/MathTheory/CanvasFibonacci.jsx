@@ -170,10 +170,12 @@ export const CanvasFibonacci = ({ currentStep, inputLimit }) => {
   const n = inputLimit ?? 6
 
   // Extract variables from the current execution step
-  const treeState = currentStep?.treeState || {}
   const activePath = currentStep?.activePath || null
   const spiralCount = currentStep?.spiralCount ?? 0
   const message = currentStep?.message ?? 'Enter limit and click Visualize.'
+
+  // Memoize treeState so downstream useMemo hooks get a stable reference
+  const treeState = useMemo(() => currentStep?.treeState || {}, [currentStep])
 
   // Dynamic values for the statistics panel
   const activeNode = useMemo(() => {
@@ -372,7 +374,6 @@ export const CanvasFibonacci = ({ currentStep, inputLimit }) => {
                         val: null,
                       }
                       const colors = getNodeColors(stateNode.state)
-                      const isLeaf = node.n <= 1
 
                       return (
                         <g key={node.id} className={colors.shadow}>
