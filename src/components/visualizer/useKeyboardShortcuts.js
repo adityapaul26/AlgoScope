@@ -15,7 +15,7 @@ export function useKeyboardShortcuts({
       const tag = document.activeElement.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
       if (disabled) return
-
+      if (e.key === ' ' && (tag === 'BUTTON' || tag === 'A')) return
       switch (e.key) {
         case ' ':
           e.preventDefault()
