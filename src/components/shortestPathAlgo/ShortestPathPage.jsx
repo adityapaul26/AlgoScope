@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { CanvasShortestPath } from './CanvasShortestPath'
 import GridVisualizer from './GridVisualizer'
+import GridComparisonMode from './GridComparisonMode'
 import CodePanel from '../visualizer/CodePanel'
 import { MenuSelectNodesShortestPath } from './MenuSelectNodesShortestPath'
 import { MenuSetAlgoShortestPath } from './MenuSetAlgoShortestPath'
@@ -18,17 +19,20 @@ export const ShortestPathPage = () => {
 
   const [viewMode, setViewMode] = React.useState('network')
 
-  const setMode = (newMode) => {
-    const newParams = new URLSearchParams(searchParams)
+  const setMode = React.useCallback(
+    (newMode) => {
+      const newParams = new URLSearchParams(searchParams)
 
-    if (newMode === 'compare') {
-      newParams.set('mode', 'compare')
-    } else {
-      newParams.delete('mode')
-    }
+      if (newMode === 'compare') {
+        newParams.set('mode', 'compare')
+      } else {
+        newParams.delete('mode')
+      }
 
-    setSearchParams(newParams)
-  }
+      setSearchParams(newParams)
+    },
+    [searchParams, setSearchParams]
+  )
 
   const [algorithm, setAlgorithm] = React.useState(null)
   const [source, setSource] = React.useState(null)
@@ -36,6 +40,18 @@ export const ShortestPathPage = () => {
   const [speed, setSpeed] = React.useState(1.0)
   const [language, setLanguage] = React.useState('javascript')
   const [runKey, setRunKey] = React.useState(null)
+  const [nodeIds, setNodeIds] = React.useState(
+    Array.from({ length: 9 }, (_, i) => i + 1)
+  )
+
+  const handleGraphChange = React.useCallback(
+    (ids) => {
+      setNodeIds(ids)
+      if (source !== null && !ids.includes(parseInt(source))) setSource(null)
+      if (target !== null && !ids.includes(parseInt(target))) setTarget(null)
+    },
+    [source, target]
+  )
 
   const handleSpeedChange = (_, newValue) => {
     setSpeed(newValue)
@@ -44,8 +60,12 @@ export const ShortestPathPage = () => {
   const handleRun = () => {
     if (!algorithm) return
 
-    if (viewMode === 'network' && (!source || !target)) {
-      return
+    if (viewMode === 'network') {
+      if (algorithm === 'prim') {
+        if (!source) return
+      } else if (algorithm !== 'kruskal') {
+        if (!source || !target) return
+      }
     }
 
     setRunKey((prev) => (prev === null ? 0 : prev + 1))
@@ -59,17 +79,21 @@ export const ShortestPathPage = () => {
   }
 
   const canRun =
-    viewMode === 'grid' ? !!algorithm : !!algorithm && !!source && !!target
+    viewMode === 'grid'
+      ? !!algorithm
+      : algorithm === 'kruskal'
+        ? !!algorithm
+        : algorithm === 'prim'
+          ? !!algorithm && !!source
+          : !!algorithm && !!source && !!target
 
   const currentSource = useMemo(() => {
     if (!algorithm) return ''
 
     const algoSource = shortestPathSources[algorithm]
-
     if (!algoSource) return ''
 
     const viewSource = algoSource[viewMode]
-
     if (!viewSource) return ''
 
     return viewSource[language]?.code ?? ''
@@ -80,10 +104,19 @@ export const ShortestPathPage = () => {
       dijkstra: "Dijkstra's",
       bellmanford: 'Bellman-Ford',
       floydwarshall: 'Floyd-Warshall',
+      prim: "Prim's MST",
+      kruskal: "Kruskal's MST",
     }
 
     return names[algo] || algo
   }
+
+  React.useEffect(() => {
+    if (algorithm === 'prim' || algorithm === 'kruskal') {
+      if (viewMode === 'grid') setViewMode('network')
+      if (mode === 'compare') setMode('solo')
+    }
+  }, [algorithm, viewMode, mode, setMode])
 
   return (
     <motion.div
@@ -120,41 +153,45 @@ export const ShortestPathPage = () => {
 
           <button
             onClick={() => setViewMode('grid')}
+            disabled={algorithm === 'prim' || algorithm === 'kruskal'}
             className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
               viewMode === 'grid'
                 ? 'bg-cyan-600 text-white'
-                : 'bg-slate-800 text-slate-400'
+                : algorithm === 'prim' || algorithm === 'kruskal'
+                  ? 'bg-slate-800/40 text-slate-600 cursor-not-allowed border border-white/5'
+                  : 'bg-slate-800 text-slate-400'
             }`}
           >
             Grid View
           </button>
         </div>
 
-        {viewMode === 'network' && (
-          <div className="flex gap-2">
-            <button
-              onClick={() => setMode('solo')}
-              className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
-                mode === 'solo'
-                  ? 'bg-cyan-600 text-white'
-                  : 'bg-slate-800 text-slate-400'
-              }`}
-            >
-              Solo
-            </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setMode('solo')}
+            className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+              mode === 'solo'
+                ? 'bg-cyan-600 text-white'
+                : 'bg-slate-800 text-slate-400'
+            }`}
+          >
+            Solo
+          </button>
 
-            <button
-              onClick={() => setMode('compare')}
-              className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
-                mode === 'compare'
-                  ? 'bg-cyan-600 text-white'
+          <button
+            onClick={() => setMode('compare')}
+            disabled={algorithm === 'prim' || algorithm === 'kruskal'}
+            className={`w-1/2 py-2 rounded-lg text-xs font-bold transition-all ${
+              mode === 'compare'
+                ? 'bg-cyan-600 text-white'
+                : algorithm === 'prim' || algorithm === 'kruskal'
+                  ? 'bg-slate-800/40 text-slate-600 cursor-not-allowed border border-white/5'
                   : 'bg-slate-800 text-slate-400'
-              }`}
-            >
-              Compare
-            </button>
-          </div>
-        )}
+            }`}
+          >
+            Compare
+          </button>
+        </div>
 
         <div className="bg-slate-950/60 rounded-xl border border-white/5 p-3 space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 mb-2">
@@ -162,27 +199,33 @@ export const ShortestPathPage = () => {
           </p>
 
           {[
+            ...(viewMode === 'network'
+              ? [{ step: '1', label: 'Build your graph (toolbar on canvas)' }]
+              : []),
             {
-              step: '1',
+              step: viewMode === 'network' ? '2' : '1',
               label: 'Pick an algorithm',
             },
             {
-              step: '2',
+              step: viewMode === 'network' ? '3' : '2',
               label:
                 viewMode === 'grid'
                   ? 'Build your grid'
                   : 'Choose source & target',
             },
             {
-              step: '3',
+              step: viewMode === 'network' ? '4' : '3',
               label: 'Press Run',
             },
           ].map(({ step, label }) => {
             const done =
-              (step === '1' && algorithm) ||
-              (step === '2' &&
+              (viewMode === 'network' && step === '1' && nodeIds.length > 0) ||
+              ((viewMode === 'network' ? step === '2' : step === '1') &&
+                algorithm) ||
+              ((viewMode === 'network' ? step === '3' : step === '2') &&
                 (viewMode === 'grid' ? true : source && target)) ||
-              (step === '3' && runKey !== null)
+              ((viewMode === 'network' ? step === '4' : step === '3') &&
+                runKey !== null)
 
             return (
               <div key={step} className="flex items-center gap-3">
@@ -240,6 +283,8 @@ export const ShortestPathPage = () => {
             target={target}
             setSource={setSource}
             setTarget={setTarget}
+            algorithm={algorithm}
+            nodeIds={nodeIds}
           />
         )}
 
@@ -251,13 +296,14 @@ export const ShortestPathPage = () => {
           <>
             {mode === 'solo' ? (
               <>
-                <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
+                <div className="rounded-xl border border-white/10 shadow-lg">
                   <CanvasShortestPath
                     algorithm={algorithm}
                     source={source}
                     target={target}
                     speed={speed}
                     runKey={runKey}
+                    onGraphChange={handleGraphChange}
                   />
                 </div>
 
@@ -285,31 +331,37 @@ export const ShortestPathPage = () => {
           </>
         ) : (
           <>
-            <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
-              <GridVisualizer
-                algorithm={algorithm}
-                speed={speed}
-                runKey={runKey}
-              />
-            </div>
+            {mode === 'solo' ? (
+              <>
+                <div className="rounded-xl overflow-hidden border border-white/10 shadow-lg">
+                  <GridVisualizer
+                    algorithm={algorithm}
+                    speed={speed}
+                    runKey={runKey}
+                  />
+                </div>
 
-            <ComplexityCard algorithm={algorithm} />
+                <ComplexityCard algorithm={algorithm} />
 
-            <div className="w-full">
-              <CodePanel
-                title={
-                  algorithm
-                    ? `${getAlgorithmName(algorithm)} Grid Implementation`
-                    : 'Code Viewer'
-                }
-                code={
-                  currentSource ||
-                  '// Select an algorithm to see implementation'
-                }
-                language={language}
-                onLanguageChange={setLanguage}
-              />
-            </div>
+                <div className="w-full">
+                  <CodePanel
+                    title={
+                      algorithm
+                        ? `${getAlgorithmName(algorithm)} Grid Implementation`
+                        : 'Code Viewer'
+                    }
+                    code={
+                      currentSource ||
+                      '// Select an algorithm to see implementation'
+                    }
+                    language={language}
+                    onLanguageChange={setLanguage}
+                  />
+                </div>
+              </>
+            ) : (
+              <GridComparisonMode />
+            )}
           </>
         )}
       </div>

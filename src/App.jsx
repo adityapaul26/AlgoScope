@@ -49,6 +49,9 @@ const MooreVotingVisualizerPage = lazy(
 const BacktrackingVisualizerPage = lazy(
   () => import('./components/backtrackingAlgo/VisualizerPage')
 )
+const StringAlgoVisualizerPage = lazy(
+  () => import('./components/stringAlgo/VisualizerPage')
+)
 
 const DPVisualizerPage = lazy(
   () => import('./components/dynamicProgramming/DPVisualizer')
