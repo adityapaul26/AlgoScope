@@ -338,6 +338,7 @@ const generateFloydWarshallSteps = (grid) => {
 
   if (hasFiniteDistance) {
     let current = startNode
+    path.push(startNode)
     let guard = 0
     const maxIterations = allNodes.length * 2
 
@@ -785,6 +786,7 @@ export default function GridComparisonMode() {
                 liveMetrics: {
                   visitedCount: visitedNodes.size,
                   iteration: step.iteration,
+                  relaxations: step.relaxations,
                 },
               },
             }))
@@ -837,6 +839,7 @@ export default function GridComparisonMode() {
                 liveMetrics: {
                   visitedCount: visitedNodes.size,
                   k: step.k,
+                  matrixUpdates: step.matrixUpdates,
                 },
               },
             }))
