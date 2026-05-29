@@ -43,7 +43,6 @@ const getNodesAndEdges = (root) => {
 
 export default function TrieVisualizer() {
   const [trie] = useState(new Trie())
-  const [version, setVersion] = useState(0) // force re-render
 
   const [inputWord, setInputWord] = useState('')
 
@@ -68,7 +67,7 @@ export default function TrieVisualizer() {
   const handleInsert = () => {
     if (!inputWord) return
     trie.insert(inputWord.trim())
-    setVersion((v) => v + 1)
+
     setInputWord('')
     setSearchResult(null)
   }
@@ -76,7 +75,7 @@ export default function TrieVisualizer() {
   const handleDelete = () => {
     if (!inputWord) return
     const success = trie.delete(inputWord.trim())
-    setVersion((v) => v + 1)
+
     setInputWord('')
     setSearchResult(success ? 'Deleted' : 'Not found')
   }
@@ -88,13 +87,13 @@ export default function TrieVisualizer() {
     setInputWord('')
     // No need to re-render for search result only
   }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   const { nodes, edges } = React.useMemo(() => {
     if (!trie.root) return { nodes: [], edges: [] }
     const centerX = dimensions.width / 2
     calculatePositions(trie.root, centerX, 50, Math.min(centerX / 2, 150))
     return getNodesAndEdges(trie.root)
-  }, [trie, version, dimensions.width])
+  }, [trie, dimensions.width])
 
   return (
     <div className="flex flex-col h-full w-full">
