@@ -1,25 +1,29 @@
 // src/components/advancedTrees/SegmentTreeVisualizer.jsx
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { buildSegmentTree, updatePoint, queryRange } from '../../algorithms/trees/segmentTree';
-import cloneDeep from 'lodash/cloneDeep';
+import React, { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  buildSegmentTree,
+  updatePoint,
+  queryRange,
+} from '../../algorithms/trees/segmentTree'
+import cloneDeep from 'lodash/cloneDeep'
 
 // Layout helper (binary tree style)
 const calculatePositions = (node, x, y, xOffset = 200) => {
-  if (!node) return;
-  node.x = x;
-  node.y = y;
-  const next = Math.max(xOffset / 1.8, 30);
-  calculatePositions(node.left, x - xOffset, y + 80, next);
-  calculatePositions(node.right, x + xOffset, y + 80, next);
-};
+  if (!node) return
+  node.x = x
+  node.y = y
+  const next = Math.max(xOffset / 1.8, 30)
+  calculatePositions(node.left, x - xOffset, y + 80, next)
+  calculatePositions(node.right, x + xOffset, y + 80, next)
+}
 
 const getNodesAndEdges = (root) => {
-  const nodes = [];
-  const edges = [];
+  const nodes = []
+  const edges = []
   const traverse = (node, parent) => {
-    if (!node) return;
-    nodes.push(node);
+    if (!node) return
+    nodes.push(node)
     if (parent) {
       edges.push({
         id: `${parent.id}-${node.id}`,
@@ -27,71 +31,77 @@ const getNodesAndEdges = (root) => {
         y1: parent.y,
         x2: node.x,
         y2: node.y,
-      });
+      })
     }
-    traverse(node.left, node);
-    traverse(node.right, node);
-  };
-  traverse(root, null);
-  return { nodes, edges };
-};
+    traverse(node.left, node)
+    traverse(node.right, node)
+  }
+  traverse(root, null)
+  return { nodes, edges }
+}
 
 export default function SegmentTreeVisualizer() {
-  const [arrayInput, setArrayInput] = useState('');
-  const [root, setRoot] = useState(null);
-  const [queryStart, setQueryStart] = useState('');
-  const [queryEnd, setQueryEnd] = useState('');
-  const [updateIdx, setUpdateIdx] = useState('');
-  const [updateVal, setUpdateVal] = useState('');
-  const [queryResult, setQueryResult] = useState(null);
-  const containerRef = useRef(null);
-  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [arrayInput, setArrayInput] = useState('')
+  const [root, setRoot] = useState(null)
+  const [queryStart, setQueryStart] = useState('')
+  const [queryEnd, setQueryEnd] = useState('')
+  const [updateIdx, setUpdateIdx] = useState('')
+  const [updateVal, setUpdateVal] = useState('')
+  const [queryResult, setQueryResult] = useState(null)
+  const containerRef = useRef(null)
+  const [dimensions, setDimensions] = useState({ width: 800, height: 600 })
 
   useEffect(() => {
     const upd = () => {
       if (containerRef.current) {
-        setDimensions({ width: containerRef.current.clientWidth, height: containerRef.current.clientHeight });
+        setDimensions({
+          width: containerRef.current.clientWidth,
+          height: containerRef.current.clientHeight,
+        })
       }
-    };
-    upd();
-    window.addEventListener('resize', upd);
-    return () => window.removeEventListener('resize', upd);
-  }, []);
+    }
+    upd()
+    window.addEventListener('resize', upd)
+    return () => window.removeEventListener('resize', upd)
+  }, [])
 
   const handleBuild = () => {
-    const nums = arrayInput.split(',').map((s) => parseInt(s.trim())).filter((n) => !isNaN(n));
-    if (nums.length === 0) return;
-    const tree = buildSegmentTree(nums);
-    setRoot(tree);
-    setQueryResult(null);
-  };
+    const nums = arrayInput
+      .split(',')
+      .map((s) => parseInt(s.trim()))
+      .filter((n) => !isNaN(n))
+    if (nums.length === 0) return
+    const tree = buildSegmentTree(nums)
+    setRoot(tree)
+    setQueryResult(null)
+  }
 
   const handleUpdate = () => {
-    if (!root) return;
-    const idx = parseInt(updateIdx);
-    const val = parseInt(updateVal);
-    if (isNaN(idx) || isNaN(val)) return;
-    const newRoot = cloneDeep(root);
-    updatePoint(newRoot, idx, val);
-    setRoot(newRoot);
-    setQueryResult(null);
-  };
+    if (!root) return
+    const idx = parseInt(updateIdx)
+    const val = parseInt(updateVal)
+    if (isNaN(idx) || isNaN(val)) return
+    const newRoot = cloneDeep(root)
+    updatePoint(newRoot, idx, val)
+    setRoot(newRoot)
+    setQueryResult(null)
+  }
 
   const handleQuery = () => {
-    if (!root) return;
-    const l = parseInt(queryStart);
-    const r = parseInt(queryEnd);
-    if (isNaN(l) || isNaN(r)) return;
-    const res = queryRange(root, l, r);
-    setQueryResult(res);
-  };
+    if (!root) return
+    const l = parseInt(queryStart)
+    const r = parseInt(queryEnd)
+    if (isNaN(l) || isNaN(r)) return
+    const res = queryRange(root, l, r)
+    setQueryResult(res)
+  }
 
   const { nodes, edges } = React.useMemo(() => {
-    if (!root) return { nodes: [], edges: [] };
-    const centerX = dimensions.width / 2;
-    calculatePositions(root, centerX, 50, Math.min(centerX / 2, 150));
-    return getNodesAndEdges(root);
-  }, [root, dimensions.width]);
+    if (!root) return { nodes: [], edges: [] }
+    const centerX = dimensions.width / 2
+    calculatePositions(root, centerX, 50, Math.min(centerX / 2, 150))
+    return getNodesAndEdges(root)
+  }, [root, dimensions.width])
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -103,7 +113,16 @@ export default function SegmentTreeVisualizer() {
           onChange={(e) => setArrayInput(e.target.value)}
           className="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white focus:border-cyan-500 outline-none"
         />
-        <button type="button" onClick={() => { console.log('Segment Build clicked'); handleBuild(); }} className="px-3 py-1 bg-cyan-600 text-white rounded hover:bg-cyan-500">Build</button>
+        <button
+          type="button"
+          onClick={() => {
+            console.log('Segment Build clicked')
+            handleBuild()
+          }}
+          className="px-3 py-1 bg-cyan-600 text-white rounded hover:bg-cyan-500"
+        >
+          Build
+        </button>
         <input
           placeholder="Idx"
           value={updateIdx}
@@ -116,7 +135,16 @@ export default function SegmentTreeVisualizer() {
           onChange={(e) => setUpdateVal(e.target.value)}
           className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white w-12 focus:border-cyan-500 outline-none"
         />
-        <button type="button" onClick={() => { console.log('Segment Update clicked'); handleUpdate(); }} className="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-500">Update</button>
+        <button
+          type="button"
+          onClick={() => {
+            console.log('Segment Update clicked')
+            handleUpdate()
+          }}
+          className="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-500"
+        >
+          Update
+        </button>
         <input
           placeholder="L"
           value={queryStart}
@@ -129,14 +157,28 @@ export default function SegmentTreeVisualizer() {
           onChange={(e) => setQueryEnd(e.target.value)}
           className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white w-12 focus:border-cyan-500 outline-none"
         />
-        <button type="button" onClick={() => { console.log('Segment Query clicked'); handleQuery(); }} className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-500">Query</button>
+        <button
+          type="button"
+          onClick={() => {
+            console.log('Segment Query clicked')
+            handleQuery()
+          }}
+          className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-500"
+        >
+          Query
+        </button>
         {queryResult !== null && (
-          <span className="ml-4 text-cyan-300 font-mono">Result: {queryResult}</span>
+          <span className="ml-4 text-cyan-300 font-mono">
+            Result: {queryResult}
+          </span>
         )}
       </div>
 
       {/* Visualisation */}
-      <div ref={containerRef} className="relative flex-1 overflow-hidden bg-slate-900/30 backdrop-blur-sm rounded-xl border border-white/5">
+      <div
+        ref={containerRef}
+        className="relative flex-1 overflow-hidden bg-slate-900/30 backdrop-blur-sm rounded-xl border border-white/5"
+      >
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
           {edges.map((e) => (
             <motion.line
@@ -174,5 +216,5 @@ export default function SegmentTreeVisualizer() {
         )}
       </div>
     </div>
-  );
+  )
 }

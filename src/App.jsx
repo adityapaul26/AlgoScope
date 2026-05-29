@@ -1,9 +1,9 @@
 import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 // Clerk components disabled for development environment
-const SignedIn = ({ children }) => <>{children}</>;
-const SignedOut = ({ children }) => <>{children}</>;
-const RedirectToSignIn = () => null;
+const SignedIn = ({ children }) => <>{children}</>
+const SignedOut = ({ children }) => <>{children}</>
+const RedirectToSignIn = () => null
 // import DPVisualizer from "./components/dynamicProgramming/DPVisualizer";
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -32,11 +32,19 @@ const ShortestPathPage = lazy(() =>
     default: module.ShortestPathPage,
   }))
 )
-  const AVLTreePage = lazy(() => import('./components/advancedTrees/AVLTreeVisualizer.jsx'));
-  const TriePage = lazy(() => import('./components/advancedTrees/TrieVisualizer.jsx'));
-  const BinaryTreeTriePage = lazy(() => import('./components/advancedTrees/BinaryTreeWithTrie.jsx'));
-  const SegmentTreePage = lazy(() => import('./components/advancedTrees/SegmentTreeVisualizer.jsx'));
-  const AdvancedTreesPage = lazy(() => import('./pages/AdvancedTreesPage.jsx'));
+const AVLTreePage = lazy(
+  () => import('./components/advancedTrees/AVLTreeVisualizer.jsx')
+)
+const TriePage = lazy(
+  () => import('./components/advancedTrees/TrieVisualizer.jsx')
+)
+const BinaryTreeTriePage = lazy(
+  () => import('./components/advancedTrees/BinaryTreeWithTrie.jsx')
+)
+const SegmentTreePage = lazy(
+  () => import('./components/advancedTrees/SegmentTreeVisualizer.jsx')
+)
+const AdvancedTreesPage = lazy(() => import('./pages/AdvancedTreesPage.jsx'))
 
 const DSLayout = lazy(() =>
   import('./components/dataStructures/DSLayout').then((module) => ({
@@ -182,7 +190,7 @@ function App() {
     {
       path: '/avl',
       element: (
-        <Suspense fallback={<PageLoader />}> 
+        <Suspense fallback={<PageLoader />}>
           <AppLayout>
             <AVLTreePage />
           </AppLayout>
@@ -192,7 +200,7 @@ function App() {
     {
       path: '/trie',
       element: (
-        <Suspense fallback={<PageLoader />}> 
+        <Suspense fallback={<PageLoader />}>
           <AppLayout>
             <TriePage />
           </AppLayout>
@@ -202,7 +210,7 @@ function App() {
     {
       path: '/segment',
       element: (
-        <Suspense fallback={<PageLoader />}> 
+        <Suspense fallback={<PageLoader />}>
           <AppLayout>
             <SegmentTreePage />
           </AppLayout>

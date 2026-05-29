@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 // Placeholder auth components (Clerk disabled)
-const SignedIn = ({ children }) => <>{children}</>;
-const SignedOut = ({ children }) => <>{children}</>;
-const SignInButton = ({ children }) => <>{children}</>;
-const UserButton = () => null;
+const SignedIn = ({ children }) => <>{children}</>
+const SignedOut = ({ children }) => <>{children}</>
+const SignInButton = ({ children }) => <>{children}</>
+const UserButton = () => null
 import { X } from 'lucide-react'
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -106,8 +106,8 @@ const algorithmLinks = [
   { name: 'Backtracking', href: '/backtracking' },
   { name: 'Practice Sandbox', href: '/practice' },
   { name: 'Guess the Algorithm', href: '/challenge' },
-    { name: 'Advanced Trees', href: '/advanced-trees' },
-  ]
+  { name: 'Advanced Trees', href: '/advanced-trees' },
+]
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false)
