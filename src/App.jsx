@@ -1,6 +1,9 @@
 import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+// Clerk components disabled for development environment
+const SignedIn = ({ children }) => <>{children}</>;
+const SignedOut = ({ children }) => <>{children}</>;
+const RedirectToSignIn = () => null;
 // import DPVisualizer from "./components/dynamicProgramming/DPVisualizer";
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -29,6 +32,12 @@ const ShortestPathPage = lazy(() =>
     default: module.ShortestPathPage,
   }))
 )
+  const AVLTreePage = lazy(() => import('./components/advancedTrees/AVLTreeVisualizer.jsx'));
+  const TriePage = lazy(() => import('./components/advancedTrees/TrieVisualizer.jsx'));
+  const BinaryTreeTriePage = lazy(() => import('./components/advancedTrees/BinaryTreeWithTrie.jsx'));
+  const SegmentTreePage = lazy(() => import('./components/advancedTrees/SegmentTreeVisualizer.jsx'));
+  const AdvancedTreesPage = lazy(() => import('./pages/AdvancedTreesPage.jsx'));
+
 const DSLayout = lazy(() =>
   import('./components/dataStructures/DSLayout').then((module) => ({
     default: module.DSLayout,
@@ -117,12 +126,7 @@ function App() {
           <AppLayout>
             {HAS_CLERK ? (
               <>
-                <SignedIn>
-                  <PracticePage />
-                </SignedIn>
-                <SignedOut>
-                  <RedirectToSignIn />
-                </SignedOut>
+                <PracticePage />
               </>
             ) : import.meta.env.DEV ? (
               // Allow access to PracticePage only in development when Clerk is not configured
@@ -176,11 +180,51 @@ function App() {
       ),
     },
     {
-      path: '/kadane',
+      path: '/avl',
+      element: (
+        <Suspense fallback={<PageLoader />}> 
+          <AppLayout>
+            <AVLTreePage />
+          </AppLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/trie',
+      element: (
+        <Suspense fallback={<PageLoader />}> 
+          <AppLayout>
+            <TriePage />
+          </AppLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/segment',
+      element: (
+        <Suspense fallback={<PageLoader />}> 
+          <AppLayout>
+            <SegmentTreePage />
+          </AppLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/advanced-trees',
       element: (
         <Suspense fallback={<PageLoader />}>
           <AppLayout>
-            <KadaneVisualizerPage />
+            <AdvancedTreesPage />
+          </AppLayout>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/binary-tree-trie',
+      element: (
+        <Suspense fallback={<PageLoader />}>
+          <AppLayout>
+            <BinaryTreeTriePage />
           </AppLayout>
         </Suspense>
       ),

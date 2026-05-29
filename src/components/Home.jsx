@@ -88,7 +88,8 @@ const ALGORITHMS = [
     color: 'theme-card border-rose-500/30 hover:border-rose-400',
     link: '/backtracking',
   },
-]
+    { title: 'Advanced Trees', description: 'Explore AVL, Trie, and Segment Tree visualizations in one place.', color: 'theme-card border-indigo-500/30 hover:border-indigo-400', link: '/advanced-trees' }
+  ]
 
 export const Home = () => {
   return (

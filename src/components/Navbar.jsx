@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from '@clerk/clerk-react'
+// Placeholder auth components (Clerk disabled)
+const SignedIn = ({ children }) => <>{children}</>;
+const SignedOut = ({ children }) => <>{children}</>;
+const SignInButton = ({ children }) => <>{children}</>;
+const UserButton = () => null;
 import { X } from 'lucide-react'
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -107,7 +106,8 @@ const algorithmLinks = [
   { name: 'Backtracking', href: '/backtracking' },
   { name: 'Practice Sandbox', href: '/practice' },
   { name: 'Guess the Algorithm', href: '/challenge' },
-]
+    { name: 'Advanced Trees', href: '/advanced-trees' },
+  ]
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false)
@@ -300,40 +300,14 @@ export const Navbar = () => {
             </a>
 
             <div className="flex items-center gap-4 border-l border-slate-200 dark:border-slate-800/80 pl-6">
-              {HAS_CLERK ? (
-                <>
-                  <SignedOut>
-                    <SignInButton mode="modal">
-                      <button className="theme-button-primary relative group overflow-hidden rounded-xl bg-slate-900 px-6 py-2 text-sm font-bold transition-all duration-300 active:scale-95">
-                        <span className="relative z-10">Sign In</span>
-
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </button>
-                    </SignInButton>
-                  </SignedOut>
-
-                  <SignedIn>
-                    <UserButton
-                      appearance={{
-                        elements: {
-                          userButtonAvatarBox:
-                            'w-9 h-9 border border-white/10 shadow-xl',
-                        },
-                      }}
-                    />
-                  </SignedIn>
-                </>
-              ) : (
-                <>
-                  <button
-                    title="Auth not configured"
-                    disabled
-                    className="theme-button-primary relative group overflow-hidden rounded-xl px-6 py-2 text-sm font-bold transition-all duration-300 opacity-50 cursor-not-allowed"
-                  >
-                    Sign In
-                  </button>
-                </>
-              )}
+              {/* Clerk disabled – show placeholder sign‑in button */}
+              <button
+                title="Auth not configured"
+                disabled
+                className="theme-button-primary relative group overflow-hidden rounded-xl px-6 py-2 text-sm font-bold transition-all duration-300 opacity-50 cursor-not-allowed"
+              >
+                Sign In
+              </button>
             </div>
           </div>
 
