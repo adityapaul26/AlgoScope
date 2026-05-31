@@ -128,6 +128,11 @@ export const complexityMap = {
     average: 'O(2^N)',
     worst: 'O(2^N)',
     space: 'O(N)',
+  },graphcoloring: {
+    best: 'O(k^V)',
+    average: 'O(k^V)',
+    worst: 'O(k^V)',
+    space: 'O(V)',
   },
   gcd: {
     best: 'O(log min(a, b))',
