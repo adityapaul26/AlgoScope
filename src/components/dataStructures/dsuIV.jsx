@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useRef } from 'react'
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 
 export default function DSUIV() {
   const [nodeCount, setNodeCount] = useState(5)
@@ -24,6 +24,19 @@ export default function DSUIV() {
 
   const findTimeoutRef = useRef(null)
   const unionTimeoutRef = useRef(null)
+
+  useEffect(() => {
+    return () => {
+      if (findTimeoutRef.current) {
+        clearTimeout(findTimeoutRef.current)
+        findTimeoutRef.current = null
+      }
+      if (unionTimeoutRef.current) {
+        clearTimeout(unionTimeoutRef.current)
+        unionTimeoutRef.current = null
+      }
+    }
+  }, [])
 
   const findRoot = useCallback((parentArray, node) => {
     let current = node
@@ -552,6 +565,7 @@ export default function DSUIV() {
             <label className="flex items-center gap-1 text-slate-300">
               <input
                 type="radio"
+                name="unionStrategy"
                 value="rank"
                 checked={strategy === 'rank'}
                 onChange={(e) => setStrategy(e.target.value)}
@@ -562,6 +576,7 @@ export default function DSUIV() {
             <label className="flex items-center gap-1 text-slate-300">
               <input
                 type="radio"
+                name="unionStrategy"
                 value="size"
                 checked={strategy === 'size'}
                 onChange={(e) => setStrategy(e.target.value)}

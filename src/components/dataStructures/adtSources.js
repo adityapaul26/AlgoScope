@@ -868,7 +868,10 @@ func main() {
   },
   dsu: {
     'union find': {
-      javascript: `class DisjointSetUnion {
+      javascript: `// Alternative optimization: Union by Size tracks subtree sizes
+// instead of ranks and always attaches the smaller tree to the
+// larger tree. Path compression can still be used alongside it.
+class DisjointSetUnion {
   constructor(n) {
     this.parent = Array(n);
     this.rank = Array(n);
