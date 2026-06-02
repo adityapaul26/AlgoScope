@@ -67,6 +67,13 @@ const ALGORITHMS = [
     link: '/math-theory',
   },
   {
+    title: 'String Algorithms',
+    description:
+      'Visualize KMP, Rabin-Karp, Z-Algorithm, and pattern matching techniques step-by-step.',
+    color: 'theme-card border-violet-500/30 hover:border-violet-400',
+    link: '/string-algorithms',
+  },
+  {
     title: 'Dynamic Programming',
     description:
       'LCS, 0/1 Knapsack, Coin Change, and LIS — watch the DP table fill step by step.',
@@ -80,6 +87,13 @@ const ALGORITHMS = [
       'N-Queens, Sudoku Solver, and Tower of Hanoi with step-by-step recursion.',
     color: 'theme-card border-rose-500/30 hover:border-rose-400',
     link: '/backtracking',
+  },
+  {
+    title: 'Advanced Trees',
+    description:
+      'Explore AVL, Trie, and Segment Tree visualizations in one place.',
+    color: 'theme-card border-indigo-500/30 hover:border-indigo-400',
+    link: '/advanced-trees',
   },
 ]
 
