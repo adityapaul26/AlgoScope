@@ -2,6 +2,7 @@ import React from 'react'
 import AlgoCard from './AlgoCard'
 import { Hero } from './hero/Hero'
 import { motion } from 'framer-motion'
+import { GuidedTour } from './GuidedTour'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -77,9 +78,16 @@ const ALGORITHMS = [
     title: 'Dynamic Programming',
     description:
       'LCS, 0/1 Knapsack, Coin Change, and LIS — watch the DP table fill step by step.',
-    path: '/dynamic-programming', // or "to" depending on your card schema
+    path: '/dynamic-programming',
     color: 'theme-card border-rose-500/30 hover:border-rose-400',
     link: '/dynamic-programming',
+  },
+  {
+    title: 'DP Optimization Journey',
+    description:
+      'Visualize the progression from Recursion to Space Optimization.',
+    color: 'theme-card border-rose-500/30 hover:border-rose-400',
+    link: '/dp-journey',
   },
   {
     title: 'Backtracking',
@@ -87,6 +95,28 @@ const ALGORITHMS = [
       'N-Queens, Sudoku Solver, and Tower of Hanoi with step-by-step recursion.',
     color: 'theme-card border-rose-500/30 hover:border-rose-400',
     link: '/backtracking',
+  },
+]
+
+const OPERATING_SYSTEMS = [
+  {
+    title: 'CPU Scheduling',
+    description: 'Visualize FCFS, SJF, Round Robin, and Priority Scheduling.',
+    color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
+    link: '/operating-systems',
+  },
+  {
+    title: 'Page Replacement',
+    description: 'Explore FIFO, LRU, and Optimal page replacement algorithms.',
+    color: 'theme-card border-purple-500/30 hover:border-purple-400',
+    link: '/operating-systems',
+  },
+  {
+    title: 'Disk Scheduling',
+    description:
+      'Understand SCAN, C-SCAN, SSTF and disk head movement strategies.',
+    color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
+    link: '/operating-systems',
   },
 ]
 
@@ -126,6 +156,32 @@ export const Home = () => {
           <div className="mt-16 mb-12 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
             <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
+              Operating Systems
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+          </div>
+
+          <motion.div
+            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            {OPERATING_SYSTEMS.map((os, index) => (
+              <AlgoCard
+                key={index}
+                title={os.title}
+                description={os.description}
+                color={os.color}
+                link={os.link}
+              />
+            ))}
+          </motion.div>
+
+          <div className="mt-16 mb-12 flex items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
+            <span className="font-mono text-sm uppercase tracking-[0.3em] theme-text-subtle">
               Games & Challenges
             </span>
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 theme-text-strong" />
@@ -138,15 +194,19 @@ export const Home = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
           >
-            <AlgoCard
-              title="Guess the Algorithm"
-              description="Test your algorithm recognition skills! Can you identify the sorting algorithm purely from its visual animation?"
-              color="theme-card border-yellow-500/30 hover:border-yellow-400"
-              link="/challenge"
-            />
+            <div data-tour="challenge-card" className="w-full">
+              <AlgoCard
+                title="Guess the Algorithm"
+                description="Test your algorithm recognition skills! Can you identify the sorting algorithm purely from its visual animation?"
+                color="theme-card border-yellow-500/30 hover:border-yellow-400"
+                link="/challenge"
+              />
+            </div>
           </motion.div>
         </div>
       </div>
+
+      <GuidedTour />
     </div>
   )
 }
