@@ -44,7 +44,7 @@ const Line = ({ variants }) => (
   />
 )
 
-const ThemeToggleButton = ({ compact = false }) => {
+const ThemeToggleButton = ({ compact = false, ...props }) => {
   const { isDark, toggleTheme } = useTheme()
   const label = `Switch to ${isDark ? 'light' : 'dark'} mode`
 
@@ -57,6 +57,7 @@ const ThemeToggleButton = ({ compact = false }) => {
       className={`theme-toggle inline-flex items-center justify-center rounded-xl border transition-all duration-300 active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 ${
         compact ? 'h-10 w-10' : 'h-10 w-10 md:h-10 md:w-10'
       }`}
+      {...props}
     >
       {isDark ? (
         <svg
@@ -94,20 +95,50 @@ const ThemeToggleButton = ({ compact = false }) => {
 }
 
 const algorithmLinks = [
-  { name: 'Search', href: '/search' },
-  { name: 'Shortest Path', href: '/spath' },
-  { name: 'Sort', href: '/sort' },
-  { name: 'Abstract Data Types', href: '/adt' },
-  { name: 'Array Search', href: '/ldssearch' },
-  { name: "Kadane's Algorithm", href: '/kadane' },
-  { name: "Moore's Voting Algorithm", href: '/moore-voting' },
-  { name: 'Math Theory', href: '/math-theory' },
-  { name: 'String Algorithms', href: '/string-algorithms' },
-  { name: 'Backtracking', href: '/backtracking' },
-  { name: 'Dynamic Programming', href: '/dynamic-programming' },
-  { name: 'Practice Sandbox', href: '/practice' },
-  { name: 'Guess the Algorithm', href: '/challenge' },
-  { name: 'Advanced Trees', href: '/advanced-trees' },
+  { name: 'Search', href: '/search', difficulty: 'Beginner' },
+  { name: 'Sort', href: '/sort', difficulty: 'Beginner' },
+  { name: 'Array Search', href: '/ldssearch', difficulty: 'Beginner' },
+  { name: 'Shortest Path', href: '/spath', difficulty: 'Intermediate' },
+  { name: 'Abstract Data Types', href: '/adt', difficulty: 'Intermediate' },
+  { name: "Kadane's Algorithm", href: '/kadane', difficulty: 'Intermediate' },
+  {
+    name: "Moore's Voting Algorithm",
+    href: '/moore-voting',
+    difficulty: 'Intermediate',
+  },
+  { name: 'Math Theory', href: '/math-theory', difficulty: 'Intermediate' },
+  {
+    name: 'String Algorithms',
+    href: '/string-algorithms',
+    difficulty: 'Advanced',
+  },
+  { name: 'Backtracking', href: '/backtracking', difficulty: 'Advanced' },
+  {
+    name: 'Dynamic Programming',
+    href: '/dynamic-programming',
+    difficulty: 'Advanced',
+  },
+  {
+    name: 'DP Optimization Journey',
+    href: '/dp-journey',
+    difficulty: 'Advanced',
+  },
+  { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
+  {
+    name: 'Guess the Algorithm',
+    href: '/challenge',
+    difficulty: 'Intermediate',
+  },
+  {
+    name: 'Sliding Window',
+    href: '/sliding-window',
+    difficulty: 'Advanced',
+  },
+  {
+    name: 'Advanced Trees',
+    href: '/advanced-trees',
+    difficulty: 'Advanced',
+  },
 ]
 
 export const Navbar = () => {
@@ -177,6 +208,7 @@ export const Navbar = () => {
         <div className="flex h-14 items-center justify-between relative">
           <Link
             to="/"
+            data-tour="logo-brand"
             className="flex flex-row text-xl font-semibold tracking-tight group"
           >
             <div className="w-10 h-10 m-auto rounded flex items-center justify-center mr-3 transition-transform group-hover:scale-110">
@@ -189,7 +221,10 @@ export const Navbar = () => {
           </Link>
 
           {/* Desktop Search */}
-          <div className="hidden md:flex flex-1 justify-center max-w-xs mx-4 z-10">
+          <div
+            data-tour="search-bar"
+            className="hidden md:flex flex-1 justify-center max-w-xs mx-4 z-10"
+          >
             <SearchBar />
           </div>
 
@@ -213,6 +248,7 @@ export const Navbar = () => {
               >
                 <button
                   ref={exploreButtonRef}
+                  data-tour="explore-nav"
                   type="button"
                   aria-haspopup="menu"
                   aria-expanded={isExploreMenuOpen}
@@ -297,10 +333,38 @@ export const Navbar = () => {
               {/* Top Level Link: Practice */}
               <li
                 className="relative py-1.5"
+                onMouseEnter={() => setHoveredTab('favorites')}
+              >
+                <Link
+                  to="/favorites"
+                  data-tour="favorites-nav"
+                  className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
+                    pathname === '/favorites'
+                      ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  Favorites
+                </Link>
+                {hoveredTab === 'favorites' && (
+                  <motion.div
+                    layoutId="nav-hover-pill"
+                    className="absolute inset-0 bg-slate-200/50 dark:bg-slate-900/60 border border-slate-300/30 dark:border-slate-800/50 rounded-lg -z-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                  />
+                )}
+              </li>
+
+              <li
+                className="relative py-1.5"
                 onMouseEnter={() => setHoveredTab('practice')}
               >
                 <Link
                   to="/practice"
+                  data-tour="practice-nav"
                   className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/practice'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
@@ -328,6 +392,7 @@ export const Navbar = () => {
               >
                 <Link
                   to="/challenge"
+                  data-tour="challenge-nav"
                   className={`relative text-sm font-medium px-4 py-1.5 rounded-lg transition-all duration-300 z-10 ${
                     pathname === '/challenge'
                       ? 'text-indigo-600 dark:text-indigo-300 font-semibold'
@@ -349,10 +414,11 @@ export const Navbar = () => {
               </li>
             </ul>
 
-            <ThemeToggleButton />
+            <ThemeToggleButton data-tour="theme-toggle" />
 
             <a
               href="https://github.com/algoscope-hq/AlgoScope"
+              data-tour="github-btn"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 rounded-xl px-4 py-1.5 text-sm font-medium transition-all duration-300 shadow-md active:scale-95"
@@ -366,15 +432,43 @@ export const Navbar = () => {
               <span>Github</span>
             </a>
 
-            <div className="flex items-center gap-4 border-l border-slate-200 dark:border-slate-800/80 pl-6">
-              {/* Clerk disabled – show placeholder sign‑in button */}
-              <button
-                title="Auth not configured"
-                disabled
-                className="theme-button-primary relative group overflow-hidden rounded-xl px-6 py-2 text-sm font-bold transition-all duration-300 opacity-50 cursor-not-allowed"
-              >
-                Sign In
-              </button>
+            <div
+              data-tour="profile-nav"
+              className="flex items-center gap-4 border-l border-slate-200 dark:border-slate-800/80 pl-6"
+            >
+              {HAS_CLERK ? (
+                <>
+                  <SignedOut>
+                    <SignInButton mode="modal">
+                      <button className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md active:scale-95">
+                        <span className="relative z-10">Sign In</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+
+                  <SignedIn>
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          userButtonAvatarBox:
+                            'w-9 h-9 border border-white/10 shadow-xl',
+                        },
+                      }}
+                    />
+                  </SignedIn>
+                </>
+              ) : (
+                <>
+                  <button
+                    title="Auth not configured"
+                    disabled
+                    className="theme-button-primary relative group overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 text-slate-700 dark:text-slate-200 px-6 py-2 text-sm font-bold transition-all duration-300 shadow-md opacity-50 cursor-not-allowed"
+                  >
+                    Sign In
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -396,6 +490,7 @@ export const Navbar = () => {
 
             <motion.button
               type="button"
+              data-tour="mobile-menu-btn"
               aria-label="Toggle menu"
               aria-expanded={open}
               onClick={() => setOpen((o) => !o)}

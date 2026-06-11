@@ -73,10 +73,30 @@ const StringAlgoVisualizerPage = lazy(
 const DPVisualizerPage = lazy(
   () => import('./components/dynamicProgramming/DPVisualizer')
 )
+const DPOptimizationJourneyPage = lazy(
+  () => import('./components/dynamicProgramming/DPOptimizationJourney') // Path to your main component
+)
+
+const SlidingWindowVisualizerPage = lazy(
+  () => import('./components/slidingwindow/SlidingWindowVisualizer')
+)
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
+const Favorites = lazy(() => import('./components/Favorites'))
 const NotFound = lazy(() => import('./components/PageNotFound'))
 const ChallengePage = lazy(() => import('./components/challenge/ChallengePage'))
+const OperatingSystemsPage = lazy(
+  () => import('./components/operatingSystems/OperatingSystemsPage')
+)
+const CPUSchedulingPage = lazy(
+  () => import('./components/operatingSystems/CPUSchedulingPage')
+)
+const PageReplacementPage = lazy(
+  () => import('./components/operatingSystems/PageReplacementPage')
+)
+const DiskSchedulingPage = lazy(
+  () => import('./components/operatingSystems/DiskSchedulingPage')
+)
 
 // Simple fallback for Suspense
 const PageLoader = () => (
@@ -89,106 +109,94 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout showBackground={false}>
-          <Home />
-        </AppLayout>
-      </Suspense>
+      <AppLayout showBackground={false}>
+        <Home />
+      </AppLayout>
     ),
   },
   {
     path: '/search',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <VisualizerPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-search">
+        <VisualizerPage />
+      </AppLayout>
     ),
   },
   {
     path: '/math-theory',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <MathTheory />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-math-theory">
+        <MathTheory />
+      </AppLayout>
     ),
   },
   {
     path: '/spath',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <ShortestPathPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-shortest-path">
+        <ShortestPathPage />
+      </AppLayout>
     ),
   },
   {
     path: '/practice',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          {HAS_CLERK ? (
-            <>
-              <SignedIn>
-                <PracticePage />
-              </SignedIn>
-              <SignedOut>
-                <RedirectToSignIn />
-              </SignedOut>
-            </>
-          ) : import.meta.env.DEV ? (
-            // Allow access to PracticePage only in development when Clerk is not configured
-            <PracticePage />
-          ) : (
-            // In non-dev environments without Clerk, redirect to home (or show unauthorized)
-            <Navigate to="/" replace />
-          )}
-        </AppLayout>
-      </Suspense>
+      <AppLayout>
+        {HAS_CLERK ? (
+          <>
+            <SignedIn>
+              <PracticePage />
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        ) : import.meta.env.DEV ? (
+          <PracticePage />
+        ) : (
+          <Navigate to="/" replace />
+        )}
+      </AppLayout>
     ),
   },
   {
     path: '/about',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <AboutAlgoScope />
-        </AppLayout>
-      </Suspense>
+      <AppLayout>
+        <AboutAlgoScope />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/favorites',
+    element: (
+      <AppLayout>
+        <Favorites />
+      </AppLayout>
     ),
   },
   {
     path: '/sort',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <SortingVisualizerPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-sorting">
+        <SortingVisualizerPage />
+      </AppLayout>
     ),
   },
   {
     path: '/ldssearch',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <ArrayVisualizerPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-array-search">
+        <ArrayVisualizerPage />
+      </AppLayout>
     ),
   },
   {
     path: '/adt',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <DSLayout />
-        </AppLayout>
-      </Suspense>
+      <AppLayout>
+        <DSLayout />
+      </AppLayout>
     ),
   },
 
@@ -196,11 +204,9 @@ const router = createBrowserRouter([
   {
     path: '/kadane',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <KadaneVisualizerPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-kadane">
+        <KadaneVisualizerPage />
+      </AppLayout>
     ),
   },
 
@@ -259,29 +265,41 @@ const router = createBrowserRouter([
   {
     path: '/moore-voting',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <MooreVotingVisualizerPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-moore-voting">
+        <MooreVotingVisualizerPage />
+      </AppLayout>
     ),
   },
   {
     path: '/backtracking',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <BacktrackingVisualizerPage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout notesKey="algo-notes-backtracking">
+        <BacktrackingVisualizerPage />
+      </AppLayout>
     ),
   },
   {
     path: '/dynamic-programming',
     element: (
+      <AppLayout notesKey="algo-notes-dynamic-programming">
+        <DPVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/dp-journey',
+    element: (
+      <AppLayout notesKey="algo-notes-dp-journey">
+        <DPOptimizationJourneyPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/sliding-window',
+    element: (
       <Suspense fallback={<PageLoader />}>
         <AppLayout>
-          <DPVisualizerPage />
+          <SlidingWindowVisualizerPage />
         </AppLayout>
       </Suspense>
     ),
@@ -289,19 +307,53 @@ const router = createBrowserRouter([
   {
     path: '/challenge',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <ChallengePage />
-        </AppLayout>
-      </Suspense>
+      <AppLayout>
+        <ChallengePage />
+      </AppLayout>
     ),
   },
   {
     path: '/string-algorithms',
     element: (
+      <AppLayout notesKey="algo-notes-string-algorithms">
+        <StringAlgoVisualizerPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/operating-systems',
+    element: (
+      <AppLayout>
+        <OperatingSystemsPage />
+      </AppLayout>
+    ),
+  },
+  {
+    path: '/operating-systems/cpu-scheduling',
+    element: (
       <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <StringAlgoVisualizerPage />
+        <AppLayout notesKey="algo-notes-cpu-scheduling">
+          <CPUSchedulingPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/operating-systems/page-replacement',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-page-replacement">
+          <PageReplacementPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/operating-systems/disk-scheduling',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-disk-scheduling">
+          <DiskSchedulingPage />
         </AppLayout>
       </Suspense>
     ),
@@ -309,17 +361,19 @@ const router = createBrowserRouter([
   {
     path: '*',
     element: (
-      <Suspense fallback={<PageLoader />}>
-        <AppLayout>
-          <NotFound />
-        </AppLayout>
-      </Suspense>
+      <AppLayout>
+        <NotFound />
+      </AppLayout>
     ),
   },
 ])
 
 function App() {
-  return <RouterProvider router={router} />
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <RouterProvider router={router} />
+    </Suspense>
+  )
 }
 
 export default App
