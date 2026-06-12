@@ -103,12 +103,12 @@ const ALGORITHMS = [
     difficulty: 'Advanced',
   },
   {
-    id: 'dp-optimization-journey',
-    title: 'DP Optimization Journey',
+    id: 'greedy',
+    title: 'Greedy Algorithms',
     description:
-      'Visualize the progression from Recursion to Space Optimization.',
-    color: 'theme-card border-rose-500/30 hover:border-rose-400',
-    link: '/dp-journey',
+      'Explore Huffman Coding and Fractional Knapsack visualizations.',
+    color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
+    link: '/greedy',
     difficulty: 'Advanced',
   },
   {

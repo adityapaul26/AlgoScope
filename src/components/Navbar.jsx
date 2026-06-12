@@ -123,6 +123,11 @@ const algorithmLinks = [
     href: '/dp-journey',
     difficulty: 'Advanced',
   },
+  {
+    name: 'Greedy Algorithms',
+    href: '/greedy',
+    difficulty: 'Intermediate',
+  },
   { name: 'Practice Sandbox', href: '/practice', difficulty: 'Intermediate' },
   {
     name: 'Guess the Algorithm',

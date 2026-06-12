@@ -80,6 +80,9 @@ const DPOptimizationJourneyPage = lazy(
 const SlidingWindowVisualizerPage = lazy(
   () => import('./components/slidingwindow/SlidingWindowVisualizer')
 )
+const GreedyVisualizerPage = lazy(
+  () => import('./components/greedyAlgo/VisualizerPage')
+)
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
 const Favorites = lazy(() => import('./components/Favorites'))
@@ -292,6 +295,16 @@ const router = createBrowserRouter([
       <AppLayout notesKey="algo-notes-dp-journey">
         <DPOptimizationJourneyPage />
       </AppLayout>
+    ),
+  },
+  {
+    path: '/greedy',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-greedy">
+          <GreedyVisualizerPage />
+        </AppLayout>
+      </Suspense>
     ),
   },
   {

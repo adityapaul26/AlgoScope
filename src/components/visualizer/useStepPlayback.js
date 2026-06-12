@@ -1,4 +1,10 @@
-import { startTransition, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { calculateStepDelay } from '../../lib/utils'
 
 export function useStepPlayback({ speed = 1 }) {
@@ -17,36 +23,34 @@ export function useStepPlayback({ speed = 1 }) {
 
   useEffect(() => {
     if (!isPlaying || !hasSteps || currentStepIndex < 0) {
-      return undefined
+      return;
     }
 
     if (currentStepIndex >= steps.length - 1) {
-      setIsPlaying(false)
-      return undefined
+      // End reached; separate effect will handle stopping playback
+      return;
     }
 
     // Now using the centralized utility function for calculation
-    const delay = calculateStepDelay(currentStep?.duration, speed)
+    const delay = calculateStepDelay(currentStep?.duration, speed);
 
     timeoutRef.current = window.setTimeout(() => {
       startTransition(() => {
-        setCurrentStepIndex((index) => {
-          return index < steps.length - 1 ? index + 1 : index
-        })
-      })
-    }, delay)
+        setCurrentStepIndex((index) => (index < steps.length - 1 ? index + 1 : index));
+      });
+    }, delay);
 
     return () => {
-      window.clearTimeout(timeoutRef.current)
-    }
-  }, [currentStep, currentStepIndex, hasSteps, isPlaying, speed, steps.length])
+      window.clearTimeout(timeoutRef.current);
+    };
+  }, [currentStep, currentStepIndex, hasSteps, isPlaying, speed, steps.length]);
 
-  useEffect(
-    () => () => {
-      window.clearTimeout(timeoutRef.current)
-    },
-    []
-  )
+  // Separate effect to stop playback when last step is reached
+  useEffect(() => {
+    if (isPlaying && currentStepIndex >= steps.length - 1) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, currentStepIndex, steps.length]);
 
   const loadSteps = useCallback((nextSteps, options = {}) => {
     const { autoPlay = true } = options
@@ -72,7 +76,7 @@ export function useStepPlayback({ speed = 1 }) {
     setCurrentStepIndex((idx) => {
       // Only start playing if we have steps and aren't at the end
       // We read steps.length via a ref-like approach inside the callback
-      return idx  // no-op, just to read state
+      return idx // no-op, just to read state
     })
     // We need to check conditions before playing
     setIsPlaying(true)
