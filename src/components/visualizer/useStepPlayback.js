@@ -23,34 +23,36 @@ export function useStepPlayback({ speed = 1 }) {
 
   useEffect(() => {
     if (!isPlaying || !hasSteps || currentStepIndex < 0) {
-      return;
+      return
     }
 
     if (currentStepIndex >= steps.length - 1) {
       // End reached; separate effect will handle stopping playback
-      return;
+      return
     }
 
     // Now using the centralized utility function for calculation
-    const delay = calculateStepDelay(currentStep?.duration, speed);
+    const delay = calculateStepDelay(currentStep?.duration, speed)
 
     timeoutRef.current = window.setTimeout(() => {
       startTransition(() => {
-        setCurrentStepIndex((index) => (index < steps.length - 1 ? index + 1 : index));
-      });
-    }, delay);
+        setCurrentStepIndex((index) =>
+          index < steps.length - 1 ? index + 1 : index
+        )
+      })
+    }, delay)
 
     return () => {
-      window.clearTimeout(timeoutRef.current);
-    };
-  }, [currentStep, currentStepIndex, hasSteps, isPlaying, speed, steps.length]);
+      window.clearTimeout(timeoutRef.current)
+    }
+  }, [currentStep, currentStepIndex, hasSteps, isPlaying, speed, steps.length])
 
   // Separate effect to stop playback when last step is reached
   useEffect(() => {
     if (isPlaying && currentStepIndex >= steps.length - 1) {
-      setIsPlaying(false);
+      startTransition(() => setIsPlaying(false))
     }
-  }, [isPlaying, currentStepIndex, steps.length]);
+  }, [isPlaying, currentStepIndex, steps.length])
 
   const loadSteps = useCallback((nextSteps, options = {}) => {
     const { autoPlay = true } = options
