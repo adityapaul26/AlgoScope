@@ -299,6 +299,8 @@ export default function CPUSchedulingPage() {
       if (playbackTimerRef.current) {
         clearTimeout(playbackTimerRef.current)
       }
+      completionTimeoutsRef.current.forEach(clearTimeout)
+      completionTimeoutsRef.current = []
     }
   }, [isPlaying, currentStep, playbackSteps, playNextStep, playbackSpeed])
 
