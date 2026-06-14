@@ -143,7 +143,27 @@ export const CanvasSearching = ({
       },
     }
 
-    const network = new window.vis.Network(containerRef.current, data, options)
+    useEffect(() => {
+  let network;
+
+  async function initNetwork() {
+    const { Network } = await import("vis-network");
+
+    network = new Network(
+      containerRef.current,
+      data,
+      options
+    );
+  }
+
+  initNetwork();
+
+  return () => {
+    if (network) {
+      network.destroy();
+    }
+  };
+}, []);
 
     nodesRef.current = nodes
     edgesRef.current = edges
