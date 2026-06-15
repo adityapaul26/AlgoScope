@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
+/**
+ * LinkedListIV component — Interactive Singly Linked List visualizer.
+ * Supports insert at beginning, insert at end, delete, and animated search.
+ */
 const LinkedListIV = () => {
   const [nodes, setNodes] = useState([])
   const [inputVal, setInputVal] = useState('')
@@ -8,6 +12,7 @@ const LinkedListIV = () => {
   const [highlighted, setHighlighted] = useState(null)
   const [isSearching, setIsSearching] = useState(false)
 
+  /** Inserts a new node at the beginning of the linked list. */
   const insertAtBeginning = () => {
     if (!inputVal.trim()) return
     setNodes(prev => [{ id: Date.now(), val: inputVal.trim() }, ...prev])
@@ -15,6 +20,7 @@ const LinkedListIV = () => {
     setInputVal('')
   }
 
+  /** Inserts a new node at the end of the linked list. */
   const insertAtEnd = () => {
     if (!inputVal.trim()) return
     setNodes(prev => [...prev, { id: Date.now(), val: inputVal.trim() }])
@@ -22,6 +28,7 @@ const LinkedListIV = () => {
     setInputVal('')
   }
 
+  /** Deletes the first node matching the input value. */
   const deleteNode = () => {
     if (!inputVal.trim()) return
     const idx = nodes.findIndex(n => n.val === inputVal.trim())
@@ -34,6 +41,7 @@ const LinkedListIV = () => {
     setInputVal('')
   }
 
+  /** Animates pointer traversal to search for a node by value. */
   const searchNode = async () => {
     if (!inputVal.trim() || isSearching) return
     setIsSearching(true)
@@ -57,8 +65,16 @@ const LinkedListIV = () => {
     setInputVal('')
   }
 
+  /** Handles Enter key press to trigger insertAtEnd. */
   const handleKey = (e) => {
     if (e.key === 'Enter') insertAtEnd()
+  }
+
+  /** Clears all nodes and resets state. */
+  const clearList = () => {
+    setNodes([])
+    setMessage('')
+    setHighlighted(null)
   }
 
   return (
@@ -106,7 +122,7 @@ const LinkedListIV = () => {
           {isSearching ? 'Searching...' : 'Search'}
         </button>
         <button
-          onClick={() => { setNodes([]); setMessage(''); setHighlighted(null) }}
+          onClick={clearList}
           className="px-4 py-2 bg-slate-700 hover:bg-slate-600
                      rounded-lg text-sm font-mono transition-all">
           Clear

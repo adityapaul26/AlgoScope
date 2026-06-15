@@ -867,8 +867,8 @@ func main() {
     },
   },
   linkedList: {
-  'singly linked list': {
-    javascript: `class Node {
+    'singly linked list': {
+      javascript: `class Node {
   constructor(val) {
     this.val = val;
     this.next = null;
@@ -909,7 +909,7 @@ class LinkedList {
     return -1;
   }
 }`,
-    python: `class Node:
+      python: `class Node:
     def __init__(self, val):
         self.val = val
         self.next = None
@@ -951,8 +951,7 @@ class LinkedList:
             cur = cur.next
             idx += 1
         return -1`,
-
-    cpp: `#include <iostream>
+      cpp: `#include <iostream>
 using namespace std;
 
 struct Node {
@@ -996,8 +995,7 @@ public:
         return -1;
     }
 };`,
-
-java: `class Node {
+      java: `class Node {
     int val;
     Node next;
     Node(int v) { val = v; next = null; }
@@ -1037,8 +1035,7 @@ class LinkedList {
         return -1;
     }
 }`,
-
-c: `#include <stdio.h>
+      c: `#include <stdio.h>
 #include <stdlib.h>
 
 struct Node {
@@ -1073,9 +1070,17 @@ void deleteNode(struct Node** head, int val) {
     struct Node* cur = *head;
     while (cur->next && cur->next->val != val) cur = cur->next;
     if (cur->next) cur->next = cur->next->next;
-}`,
+}
 
-rust: `struct Node {
+struct Node* search(struct Node* head, int val) {
+    struct Node* cur = head;
+    while (cur) {
+        if (cur->val == val) return cur;
+        cur = cur->next;
+    }
+    return NULL;
+}`,
+      rust: `struct Node {
     val: i32,
     next: Option<Box<Node>>,
 }
@@ -1103,9 +1108,33 @@ impl LinkedList {
         }
         *cur = Some(new_node);
     }
-}`,
 
-go: `package main
+    fn delete_by_value(&mut self, val: i32) {
+        let mut cur = &mut self.head;
+        loop {
+            match cur {
+                None => break,
+                Some(node) if node.val == val => {
+                    *cur = node.next.take();
+                    break;
+                }
+                Some(node) => cur = &mut node.next,
+            }
+        }
+    }
+
+    fn search_by_value(&self, val: i32) -> Option<usize> {
+        let mut cur = &self.head;
+        let mut idx = 0;
+        while let Some(node) = cur {
+            if node.val == val { return Some(idx); }
+            cur = &node.next;
+            idx += 1;
+        }
+        None
+    }
+}`,
+      go: `package main
 
 import "fmt"
 
@@ -1147,8 +1176,8 @@ func (l *LinkedList) Search(val int) int {
     }
     return -1
 }`,
-  }
-},
+    },
+  },
   dsu: {
     'union find': {
       javascript: `// Alternative optimization: Union by Size tracks subtree sizes
