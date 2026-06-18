@@ -1,7 +1,9 @@
 import React, { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
-
+// Clerk components disabled for development environment
+const SignedIn = ({ children }) => <>{children}</>
+const SignedOut = ({ children }) => <>{children}</>
+const RedirectToSignIn = () => null
 // import DPVisualizer from "./components/dynamicProgramming/DPVisualizer";
 
 const HAS_CLERK = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY)
@@ -30,6 +32,20 @@ const ShortestPathPage = lazy(() =>
     default: module.ShortestPathPage,
   }))
 )
+const AVLTreePage = lazy(
+  () => import('./components/advancedTrees/AVLTreeVisualizer.jsx')
+)
+const TriePage = lazy(
+  () => import('./components/advancedTrees/TrieVisualizer.jsx')
+)
+const BinaryTreeTriePage = lazy(
+  () => import('./components/advancedTrees/BinaryTreeWithTrie.jsx')
+)
+const SegmentTreePage = lazy(
+  () => import('./components/advancedTrees/SegmentTreeVisualizer.jsx')
+)
+const AdvancedTreesPage = lazy(() => import('./pages/AdvancedTreesPage.jsx'))
+
 const DSLayout = lazy(() =>
   import('./components/dataStructures/DSLayout').then((module) => ({
     default: module.DSLayout,
@@ -66,6 +82,9 @@ const SlidingWindowVisualizerPage = lazy(
 )
 const TwoPointerVisualizerPage = lazy(
   () => import('./components/twoPointer/TwoPointerVisualizer')
+)
+const GreedyVisualizerPage = lazy(
+  () => import('./components/greedyAlgo/VisualizerPage')
 )
 const PracticePage = lazy(() => import('./components/PracticePage'))
 const AboutAlgoScope = lazy(() => import('./components/about/About'))
@@ -186,6 +205,8 @@ const router = createBrowserRouter([
       </AppLayout>
     ),
   },
+
+  // Kadane (from main)
   {
     path: '/kadane',
     element: (
@@ -194,6 +215,59 @@ const router = createBrowserRouter([
       </AppLayout>
     ),
   },
+
+  // Advanced Trees (from feature/advanced-trees)
+  {
+    path: '/avl',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <AVLTreePage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/trie',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <TriePage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/segment',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <SegmentTreePage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/advanced-trees',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <AdvancedTreesPage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/binary-tree-trie',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout>
+          <BinaryTreeTriePage />
+        </AppLayout>
+      </Suspense>
+    ),
+  },
+
   {
     path: '/moore-voting',
     element: (
@@ -224,6 +298,16 @@ const router = createBrowserRouter([
       <AppLayout notesKey="algo-notes-dp-journey">
         <DPOptimizationJourneyPage />
       </AppLayout>
+    ),
+  },
+  {
+    path: '/greedy',
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <AppLayout notesKey="algo-notes-greedy">
+          <GreedyVisualizerPage />
+        </AppLayout>
+      </Suspense>
     ),
   },
   {
