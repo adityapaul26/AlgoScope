@@ -103,12 +103,12 @@ const ALGORITHMS = [
     difficulty: 'Intermediate',
   },
   {
-    id: 'greedy',
-    title: 'Greedy Algorithms',
+    id: 'dp-optimization-journey',
+    title: 'DP Optimization Journey',
     description:
-      'Explore Huffman Coding and Fractional Knapsack visualizations.',
-    color: 'theme-card border-cyan-500/30 hover:border-cyan-400',
-    link: '/greedy',
+      'Visualize the progression from Recursion to Space Optimization.',
+    color: 'theme-card border-rose-500/30 hover:border-rose-400',
+    link: '/dp-journey',
     difficulty: 'Advanced',
   },
   {
@@ -163,13 +163,6 @@ const OPERATING_SYSTEMS = [
     color: 'theme-card border-emerald-500/30 hover:border-emerald-400',
     link: '/operating-systems/disk-scheduling',
     difficulty: 'Intermediate',
-  },
-  {
-    title: 'Advanced Trees',
-    description:
-      'Explore AVL, Trie, and Segment Tree visualizations in one place.',
-    color: 'theme-card border-indigo-500/30 hover:border-indigo-400',
-    link: '/advanced-trees',
   },
 ]
 
