@@ -344,6 +344,37 @@ const ALGORITHMS = [
       'Climbing Stairs',
     ],
   },
+  //Sliding Window and 2 Pointer
+  {
+    id: 'sliding-window',
+    name: 'Sliding Window',
+    category: 'Sliding Window',
+    route: '/sliding-window',
+    keywords: [
+      'slidingwindow',
+      'max sum of size k',
+      'longest unique substring',
+      'smallest subarray greater than target',
+      'subarrays',
+      'sliding window',
+    ],
+  },
+  {
+    id: 'two-pointer',
+    name: 'Two Pointer',
+    category: 'Two Pointer',
+    route: '/two-pointer',
+    keywords: [
+      'two-pointer',
+      'two pointer',
+      '2 pointer',
+      'two sum',
+      '2-sum',
+      'container with most water',
+      'valid palindrome',
+      'trapping rain water',
+    ],
+  },
 ]
 
 const SearchBar = ({ onOpen }) => {
