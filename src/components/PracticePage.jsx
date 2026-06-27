@@ -479,6 +479,13 @@ const PracticePage = () => {
   }
 
   const handleRunCode = async (userCode) => {
+    if (language !== 'javascript') {
+      setLogs((prev) => [
+        ...prev,
+        { type: 'error', content: 'Code execution is only supported for JavaScript. Python, Java, and C++ support coming soon.' },
+      ])
+      return
+    }
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
@@ -507,6 +514,13 @@ const PracticePage = () => {
   }
 
   const handleRunCodeA = async (userCode) => {
+    if (language !== 'javascript') {
+      setLogsA((prev) => [
+        ...prev,
+        { type: 'error', content: 'Code execution is only supported for JavaScript. Python, Java, and C++ support coming soon.' },
+      ])
+      return
+    }
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
@@ -535,6 +549,13 @@ const PracticePage = () => {
   }
 
   const handleRunCodeB = async (userCode) => {
+    if (language !== 'javascript') {
+      setLogsB((prev) => [
+        ...prev,
+        { type: 'error', content: 'Code execution is only supported for JavaScript. Python, Java, and C++ support coming soon.' },
+      ])
+      return
+    }
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
@@ -563,6 +584,17 @@ const PracticePage = () => {
   }
 
   const handleCompareBenchmark = async () => {
+    if (language !== 'javascript') {
+      setLogsA((prev) => [
+        ...prev,
+        { type: 'error', content: 'Compare is only supported for JavaScript. Python, Java, and C++ support coming soon.' },
+      ])
+      setLogsB((prev) => [
+        ...prev,
+        { type: 'error', content: 'Compare is only supported for JavaScript. Python, Java, and C++ support coming soon.' },
+      ])
+      return
+    }
     if (isExecuting || isExecutingA || isExecutingB || isComparing) {
       return
     }
