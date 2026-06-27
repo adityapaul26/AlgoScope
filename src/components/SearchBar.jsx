@@ -584,10 +584,11 @@ const SearchBar = ({ onOpen }) => {
         aria-label="Search algorithms"
       >
         <svg
-          className="w-4 h-4 transition-colors"
+          className="w-4 h-4 text-slate-400 transition-colors duration-300"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -635,10 +636,11 @@ const SearchBar = ({ onOpen }) => {
                 </h2>
                 <div className="absolute inset-y-0 left-7 flex items-center pointer-events-none">
                   <svg
-                    className="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors"
+                    className="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-300"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
